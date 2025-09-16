@@ -6679,6 +6679,11 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
             modalContent.appendChild(footerElement);
             modal.appendChild(modalContent);
             document.body.appendChild(modal);
+            
+            // Debug: Log the created elements
+            console.log('Created modal with steps:', document.querySelectorAll('[data-step]'));
+            console.log('Created indicators:', document.querySelectorAll('.step-indicator'));
+            console.log('Created step texts:', document.querySelectorAll('.step-text'));
         }
         
         // Clear verbose review loading
@@ -6698,13 +6703,20 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
                 return;
             }
             
-            const step = document.querySelector(`[data-step="${stepIndex}"]`);
-            if (!step) {
-                console.warn(`Step ${stepIndex} not found in DOM`);
-                console.log('Available steps:', document.querySelectorAll('[data-step]'));
-                return;
-            }
-            
+            // Add a small delay to ensure DOM is fully rendered
+            setTimeout(() => {
+                const step = document.querySelector(`[data-step="${stepIndex}"]`);
+                if (!step) {
+                    console.warn(`Step ${stepIndex} not found in DOM`);
+                    console.log('Available steps:', document.querySelectorAll('[data-step]'));
+                    return;
+                }
+                
+                updateStepElement(step, stepIndex, status);
+            }, 10);
+        }
+        
+        function updateStepElement(step, stepIndex, status) {
             console.log(`Updating step ${stepIndex} to ${status}`, step);
             
             // Remove all status classes from the step
