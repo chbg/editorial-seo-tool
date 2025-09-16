@@ -6680,10 +6680,14 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
             modal.appendChild(modalContent);
             document.body.appendChild(modal);
             
-            // Debug: Log the created elements
-            console.log('Created modal with steps:', document.querySelectorAll('[data-step]'));
-            console.log('Created indicators:', document.querySelectorAll('.step-indicator'));
-            console.log('Created step texts:', document.querySelectorAll('.step-text'));
+            // Debug: Log the created elements after a short delay
+            setTimeout(() => {
+                console.log('Created modal with steps:', document.querySelectorAll('[data-step]'));
+                console.log('Created indicators:', document.querySelectorAll('.step-indicator'));
+                console.log('Created step texts:', document.querySelectorAll('.step-text'));
+                console.log('Modal visible:', modal.offsetParent !== null);
+                console.log('Modal display style:', window.getComputedStyle(modal).display);
+            }, 100);
         }
         
         // Clear verbose review loading
@@ -6703,17 +6707,34 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
                 return;
             }
             
-            // Add a small delay to ensure DOM is fully rendered
-            setTimeout(() => {
-                const step = document.querySelector(`[data-step="${stepIndex}"]`);
-                if (!step) {
-                    console.warn(`Step ${stepIndex} not found in DOM`);
-                    console.log('Available steps:', document.querySelectorAll('[data-step]'));
-                    return;
-                }
+            // Try multiple times with increasing delays to find the elements
+            let attempts = 0;
+            const maxAttempts = 5;
+            
+            function tryUpdateStep() {
+                attempts++;
+                console.log(`Attempt ${attempts} to find step ${stepIndex}`);
                 
-                updateStepElement(step, stepIndex, status);
-            }, 10);
+                const step = document.querySelector(`[data-step="${stepIndex}"]`);
+                if (step) {
+                    console.log(`Found step ${stepIndex} on attempt ${attempts}`);
+                    updateStepElement(step, stepIndex, status);
+                } else if (attempts < maxAttempts) {
+                    console.log(`Step ${stepIndex} not found, retrying in ${attempts * 50}ms...`);
+                    console.log('Available steps:', document.querySelectorAll('[data-step]'));
+                    console.log('Available indicators:', document.querySelectorAll('.step-indicator'));
+                    console.log('Available step texts:', document.querySelectorAll('.step-text'));
+                    setTimeout(tryUpdateStep, attempts * 50);
+                } else {
+                    console.error(`Step ${stepIndex} not found after ${maxAttempts} attempts`);
+                    console.log('Final DOM state:');
+                    console.log('All steps:', document.querySelectorAll('[data-step]'));
+                    console.log('All indicators:', document.querySelectorAll('.step-indicator'));
+                    console.log('All step texts:', document.querySelectorAll('.step-text'));
+                }
+            }
+            
+            tryUpdateStep();
         }
         
         function updateStepElement(step, stepIndex, status) {
