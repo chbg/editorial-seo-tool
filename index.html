@@ -6739,6 +6739,8 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
         
         function updateStepElement(step, stepIndex, status) {
             console.log(`Updating step ${stepIndex} to ${status}`, step);
+            console.log('Step innerHTML:', step.innerHTML);
+            console.log('Step children:', step.children);
             
             // Remove all status classes from the step
             step.classList.remove('active', 'completed', 'pending');
@@ -6771,6 +6773,8 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
                 }
             } else {
                 console.warn('No indicator found for step', stepIndex);
+                console.log('Available classes in step:', step.className);
+                console.log('All elements in step:', step.querySelectorAll('*'));
             }
             
             // Update the step text color
@@ -6790,6 +6794,10 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
                 console.log('Updated step text color');
             } else {
                 console.warn('No step text found for step', stepIndex);
+                console.log('Trying alternative selectors:');
+                console.log('div[class*="step-text"]:', step.querySelector('div[class*="step-text"]'));
+                console.log('div:last-child:', step.querySelector('div:last-child'));
+                console.log('All divs in step:', step.querySelectorAll('div'));
             }
             
             // Force a reflow to ensure changes are visible
