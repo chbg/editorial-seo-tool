@@ -6472,30 +6472,19 @@ Be thorough - flag any claim that would benefit from a source link, even if it s
                     `## ${section.title}\n${section.content}`
                 ).join('\n\n');
 
+                // Get client's AI artifacts or use default
+                const clientAIArtifacts = workflowConfig.clientId && CLIENT_DATA[workflowConfig.clientId]?.aiArtifacts 
+                    ? CLIENT_DATA[workflowConfig.clientId].aiArtifacts 
+                    : CODIFIED_AI_ARTIFACTS;
+
                 const prompt = `Review this article for AI-generated patterns and artifacts. Identify specific phrases, structures, or language patterns that sound artificial or overly formal.
 
 ARTICLE CONTENT:
 ${allContent}
 
-# AI Artifacts to Avoid
+# AI Artifacts to Avoid (Client-Specific)
 
-## 1. Generic opening phrases
-- "In this digital age", "In today's world", "It's worth noting", "At its core", "In the realm of", "In the landscape of", "Ever wondered…?", "Let's delve into…"
-
-## 2. Overly formal transitions
-- "Furthermore", "Moreover", "Additionally", "In conclusion", "To summarize", "It should be noted"
-
-## 3. Redundant phrases
-- "It's important to note that", "It's worth mentioning", "It's crucial to understand", "It's essential to recognize", "Knowledge is power"
-
-## 4. Generic conclusions
-- "The future looks bright", "Only time will tell", "The possibilities are endless", "The sky's the limit", "Unlock your potential"
-
-## 5. Overly enthusiastic language
-- "amazing", "incredible", "revolutionary", "game-changing", "groundbreaking"
-
-## 6. AI-typical sentence patterns
-- Repetitive structures, predictable transitions, overly comprehensive sweeps, echoing common phrases, lack of voice drift, overloaded adjectives, labored clarity
+${clientAIArtifacts}
 
 For each section, provide:
 1. Overall naturalness score (1-10)
