@@ -6480,6 +6480,153 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
             }
         }
 
+        // Set verbose review loading with progress steps
+        function setVerboseReviewLoading(buttonId, title, steps) {
+            // Disable the button
+            const button = document.getElementById(buttonId);
+            if (button) {
+                button.classList.add('loading');
+                button.disabled = true;
+            }
+            
+            // Remove any existing modal
+            const existingModal = document.getElementById('verboseReviewModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.id = 'verboseReviewModal';
+            modal.className = 'modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 1000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            `;
+            
+            // Create modal content
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                border-radius: 15px;
+                padding: 30px;
+                max-width: 600px;
+                width: 100%;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                position: relative;
+            `;
+            
+            // Create title
+            const titleElement = document.createElement('h2');
+            titleElement.textContent = title;
+            titleElement.style.cssText = `
+                margin: 0 0 10px 0;
+                color: #1f2937;
+                font-size: 1.5rem;
+            `;
+            
+            // Create subtitle
+            const subtitleElement = document.createElement('p');
+            subtitleElement.textContent = 'Processing your content...';
+            subtitleElement.style.cssText = `
+                margin: 0 0 30px 0;
+                color: #6b7280;
+                font-size: 1rem;
+            `;
+            
+            // Create steps container
+            const stepsContainer = document.createElement('div');
+            stepsContainer.style.cssText = `
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            `;
+            
+            // Create each step
+            steps.forEach((stepText, index) => {
+                const stepElement = document.createElement('div');
+                stepElement.setAttribute('data-step', index);
+                stepElement.style.cssText = `
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    padding: 15px;
+                    border-radius: 8px;
+                    background: #f8fafc;
+                    border: 1px solid #e2e8f0;
+                    transition: all 0.3s ease;
+                `;
+                
+                // Create step indicator
+                const indicator = document.createElement('div');
+                indicator.className = 'step-indicator';
+                indicator.style.cssText = `
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: bold;
+                    font-size: 14px;
+                    background: #e5e7eb;
+                    color: #6b7280;
+                    flex-shrink: 0;
+                `;
+                indicator.textContent = index + 1;
+                
+                // Create step text
+                const textElement = document.createElement('div');
+                textElement.className = 'step-text';
+                textElement.textContent = stepText;
+                textElement.style.cssText = `
+                    color: #6b7280;
+                    font-size: 14px;
+                    line-height: 1.4;
+                `;
+                
+                stepElement.appendChild(indicator);
+                stepElement.appendChild(textElement);
+                stepsContainer.appendChild(stepElement);
+            });
+            
+            // Create footer message
+            const footerElement = document.createElement('div');
+            footerElement.textContent = 'This may take a few moments...';
+            footerElement.style.cssText = `
+                margin-top: 20px;
+                text-align: center;
+                color: #9ca3af;
+                font-size: 14px;
+                font-style: italic;
+            `;
+            
+            // Assemble modal
+            modalContent.appendChild(titleElement);
+            modalContent.appendChild(subtitleElement);
+            modalContent.appendChild(stepsContainer);
+            modalContent.appendChild(footerElement);
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+        }
+        
+        // Clear verbose review loading
+        function clearVerboseReviewLoading() {
+            const modal = document.getElementById('verboseReviewModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
         // Fixed updateReviewStep function to properly cycle through progress indicators
         function updateReviewStep(stepIndex, status = 'active') {
             // Check if the modal exists
