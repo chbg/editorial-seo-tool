@@ -277,6 +277,13 @@
 
 
 
+        /* Progress indicator animation */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
         /* Client Management Styles */
         .client-select-container {
             display: flex;
@@ -6469,6 +6476,66 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
                 if (button) {
                     button.classList.remove('loading');
                     button.disabled = false;
+                }
+            }
+        }
+
+        // Fixed updateReviewStep function to properly cycle through progress indicators
+        function updateReviewStep(stepIndex, status = 'active') {
+            // Check if the modal exists
+            const modal = document.getElementById('verboseReviewModal');
+            if (!modal) {
+                console.warn(`Review modal not found when trying to update step ${stepIndex}`);
+                return;
+            }
+            
+            const step = document.querySelector(`[data-step="${stepIndex}"]`);
+            if (!step) {
+                console.warn(`Step ${stepIndex} not found in DOM`);
+                return;
+            }
+            
+            console.log(`Updating step ${stepIndex} to ${status}`);
+            
+            // Remove all status classes from the step
+            step.classList.remove('active', 'completed', 'pending');
+            
+            // Add the new status class
+            step.classList.add(status);
+            
+            // Update the visual indicator
+            const indicator = step.querySelector('.step-indicator');
+            if (indicator) {
+                if (status === 'completed') {
+                    indicator.innerHTML = '✓';
+                    indicator.style.background = '#10b981';
+                    indicator.style.color = 'white';
+                } else if (status === 'active') {
+                    indicator.innerHTML = '⏳';
+                    indicator.style.background = '#3b82f6';
+                    indicator.style.color = 'white';
+                    // Add a subtle animation
+                    indicator.style.animation = 'pulse 2s infinite';
+                } else {
+                    indicator.innerHTML = stepIndex + 1;
+                    indicator.style.background = '#e5e7eb';
+                    indicator.style.color = '#6b7280';
+                    indicator.style.animation = 'none';
+                }
+            }
+            
+            // Update the step text color
+            const stepText = step.querySelector('.step-text');
+            if (stepText) {
+                if (status === 'completed') {
+                    stepText.style.color = '#10b981';
+                    stepText.style.fontWeight = '500';
+                } else if (status === 'active') {
+                    stepText.style.color = '#3b82f6';
+                    stepText.style.fontWeight = '600';
+                } else {
+                    stepText.style.color = '#6b7280';
+                    stepText.style.fontWeight = '400';
                 }
             }
         }
