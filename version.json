@@ -1,0 +1,18 @@
+{
+  "version": "1.2.1",
+  "buildDate": "2025-01-27T00:00:00Z",
+  "changelog": [
+    "v1.2.1 - Fixed progress indicator visual updates and added versioning system",
+    "v1.2.0 - Fixed progress indicators in review modals",
+    "v1.1.0 - Added keyword management system with primary and supporting keywords",
+    "v1.0.0 - Initial release with basic content generation"
+  ],
+  "features": [
+    "AI-powered content generation",
+    "Advanced keyword management",
+    "Client management system",
+    "Article review and editing",
+    "Progress indicators for reviews",
+    "Version management and update notifications"
+  ]
+}

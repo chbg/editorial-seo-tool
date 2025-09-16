@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editorial SEO Tool (Beta)</title>
+    <title>Editorial SEO Tool (Beta) v1.2.1</title>
     <style>
         * {
             margin: 0;
@@ -282,6 +282,59 @@
             0% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.1); opacity: 0.7; }
             100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Step status styles */
+        [data-step].active {
+            background: #dbeafe !important;
+            border-color: #3b82f6 !important;
+            transform: scale(1.02);
+        }
+
+        [data-step].completed {
+            background: #d1fae5 !important;
+            border-color: #10b981 !important;
+        }
+
+        [data-step].pending {
+            background: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        .step-indicator {
+            transition: all 0.3s ease !important;
+        }
+
+        .step-text {
+            transition: all 0.3s ease !important;
+        }
+
+        /* Version Info Styles */
+        .version-info {
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .version-number {
+            font-size: 18px;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 4px;
+        }
+
+        .version-date {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .version-info .btn {
+            width: 100%;
+            font-size: 11px;
+            padding: 6px 12px;
         }
 
         /* Client Management Styles */
@@ -2322,6 +2375,15 @@
                 <h4>Client Memory</h4>
                 <div class="quick-actions">
                     <button type="button" class="btn btn-small" onclick="showClientMemory()" title="View client memory data">View Memory</button>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h4>VERSION</h4>
+                <div class="version-info">
+                    <div class="version-number">v1.2.1</div>
+                    <div class="version-date">Jan 27, 2025</div>
+                    <button class="btn btn-small" onclick="showVersionInfo()">Version Info</button>
                 </div>
             </div>
         </div>
@@ -6639,10 +6701,11 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
             const step = document.querySelector(`[data-step="${stepIndex}"]`);
             if (!step) {
                 console.warn(`Step ${stepIndex} not found in DOM`);
+                console.log('Available steps:', document.querySelectorAll('[data-step]'));
                 return;
             }
             
-            console.log(`Updating step ${stepIndex} to ${status}`);
+            console.log(`Updating step ${stepIndex} to ${status}`, step);
             
             // Remove all status classes from the step
             step.classList.remove('active', 'completed', 'pending');
@@ -6652,27 +6715,34 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
             
             // Update the visual indicator
             const indicator = step.querySelector('.step-indicator');
+            console.log('Found indicator:', indicator);
             if (indicator) {
                 if (status === 'completed') {
                     indicator.innerHTML = '✓';
                     indicator.style.background = '#10b981';
                     indicator.style.color = 'white';
+                    console.log('Set indicator to completed');
                 } else if (status === 'active') {
                     indicator.innerHTML = '⏳';
                     indicator.style.background = '#3b82f6';
                     indicator.style.color = 'white';
                     // Add a subtle animation
                     indicator.style.animation = 'pulse 2s infinite';
+                    console.log('Set indicator to active');
                 } else {
                     indicator.innerHTML = stepIndex + 1;
                     indicator.style.background = '#e5e7eb';
                     indicator.style.color = '#6b7280';
                     indicator.style.animation = 'none';
+                    console.log('Set indicator to pending');
                 }
+            } else {
+                console.warn('No indicator found for step', stepIndex);
             }
             
             // Update the step text color
             const stepText = step.querySelector('.step-text');
+            console.log('Found step text:', stepText);
             if (stepText) {
                 if (status === 'completed') {
                     stepText.style.color = '#10b981';
@@ -6684,7 +6754,13 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
                     stepText.style.color = '#6b7280';
                     stepText.style.fontWeight = '400';
                 }
+                console.log('Updated step text color');
+            } else {
+                console.warn('No step text found for step', stepIndex);
             }
+            
+            // Force a reflow to ensure changes are visible
+            step.offsetHeight;
         }
 
         async function fixAIArtifactsInSection(sectionTitle, sectionContent) {
@@ -10660,6 +10736,181 @@ ${generatedContent.conclusion}`;
                 clientInfo.classList.add('show');
             }
         }
+
+        // Version management
+        const APP_VERSION = '1.2.1';
+        const VERSION_CHECK_INTERVAL = 300000; // 5 minutes
+
+        // Check for updates
+        async function checkForUpdates() {
+            try {
+                const response = await fetch(`/version.json?t=${Date.now()}`);
+                const versionData = await response.json();
+                
+                if (versionData.version !== APP_VERSION) {
+                    showUpdateNotification(versionData);
+                }
+            } catch (error) {
+                console.log('Version check failed:', error);
+            }
+        }
+
+        // Show update notification
+        function showUpdateNotification(versionData) {
+            // Remove existing notification
+            const existing = document.getElementById('updateNotification');
+            if (existing) existing.remove();
+            
+            const notification = document.createElement('div');
+            notification.id = 'updateNotification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #3b82f6;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+                max-width: 300px;
+                font-size: 14px;
+            `;
+            
+            notification.innerHTML = `
+                <div style="font-weight: 600; margin-bottom: 8px;">
+                    🚀 Update Available!
+                </div>
+                <div style="margin-bottom: 12px;">
+                    New version ${versionData.version} is available. 
+                    You're currently using v${APP_VERSION}.
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="window.location.reload()" style="
+                        background: white; 
+                        color: #3b82f6; 
+                        border: none; 
+                        padding: 6px 12px; 
+                        border-radius: 4px; 
+                        cursor: pointer;
+                        font-size: 12px;
+                        font-weight: 600;
+                    ">Update Now</button>
+                    <button onclick="this.parentElement.parentElement.remove()" style="
+                        background: transparent; 
+                        color: white; 
+                        border: 1px solid white; 
+                        padding: 6px 12px; 
+                        border-radius: 4px; 
+                        cursor: pointer;
+                        font-size: 12px;
+                    ">Later</button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 30 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 30000);
+        }
+
+        // Show version info modal
+        function showVersionInfo() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 1000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                border-radius: 15px;
+                padding: 30px;
+                max-width: 600px;
+                width: 100%;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                position: relative;
+            `;
+            
+            modalContent.innerHTML = `
+                <h2 style="margin: 0 0 20px 0; color: #1f2937;">Version Information</h2>
+                <div style="margin-bottom: 20px;">
+                    <div style="font-size: 24px; font-weight: 600; color: #3b82f6; margin-bottom: 5px;">
+                        v${APP_VERSION}
+                    </div>
+                    <div style="color: #6b7280; font-size: 14px;">
+                        Build Date: ${new Date().toLocaleDateString()}
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #1f2937; margin-bottom: 10px;">Recent Updates</h3>
+                    <ul style="color: #4b5563; line-height: 1.6; padding-left: 20px;">
+                        <li>Fixed progress indicator visual updates and added versioning system</li>
+                        <li>Fixed progress indicators in review modals</li>
+                        <li>Added keyword management system</li>
+                        <li>Improved client management</li>
+                        <li>Enhanced article review features</li>
+                    </ul>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #1f2937; margin-bottom: 10px;">Features</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; color: #4b5563; font-size: 14px;">
+                        <div>✓ AI Content Generation</div>
+                        <div>✓ Keyword Management</div>
+                        <div>✓ Client Management</div>
+                        <div>✓ Article Review</div>
+                        <div>✓ Progress Indicators</div>
+                        <div>✓ Auto-save</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button onclick="this.closest('.modal').remove()" style="
+                        background: #3b82f6; 
+                        color: white; 
+                        border: none; 
+                        padding: 10px 20px; 
+                        border-radius: 6px; 
+                        cursor: pointer;
+                        font-weight: 600;
+                    ">Close</button>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // Close on outside click
+            modal.onclick = (e) => {
+                if (e.target === modal) modal.remove();
+            };
+        }
+
+        // Initialize version checking
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for updates on load
+            setTimeout(checkForUpdates, 2000);
+            
+            // Check for updates periodically
+            setInterval(checkForUpdates, VERSION_CHECK_INTERVAL);
+        });
     </script>
 </body>
 </html>
