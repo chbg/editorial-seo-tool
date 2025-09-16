@@ -1,7 +1,8 @@
 {
-  "version": "1.2.2",
+  "version": "1.2.3",
   "buildDate": "2025-01-27T00:00:00Z",
   "changelog": [
+    "v1.2.3 - Enhanced progress indicator debugging with retry logic",
     "v1.2.2 - Fixed progress indicator timing issues and enhanced debugging",
     "v1.2.1 - Fixed progress indicator visual updates and added versioning system",
     "v1.2.0 - Fixed progress indicators in review modals",
