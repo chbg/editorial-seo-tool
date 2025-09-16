@@ -1,7 +1,8 @@
 {
-  "version": "1.2.1",
+  "version": "1.2.2",
   "buildDate": "2025-01-27T00:00:00Z",
   "changelog": [
+    "v1.2.2 - Fixed progress indicator timing issues and enhanced debugging",
     "v1.2.1 - Fixed progress indicator visual updates and added versioning system",
     "v1.2.0 - Fixed progress indicators in review modals",
     "v1.1.0 - Added keyword management system with primary and supporting keywords",
@@ -13,6 +14,7 @@
     "Client management system",
     "Article review and editing",
     "Progress indicators for reviews",
-    "Version management and update notifications"
+    "Version management and update notifications",
+    "Enhanced debugging and timing fixes"
   ]
 }
