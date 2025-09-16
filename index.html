@@ -6583,94 +6583,138 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
             // Remove any existing modal
             const existingModal = document.getElementById('verboseReviewModal');
             if (existingModal) {
-                console.log('Removing existing modal');
                 existingModal.remove();
             }
             
-            // Create modal HTML directly
-            const modalHTML = `
-                <div id="verboseReviewModal" class="modal" style="
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0,0,0,0.5);
-                    z-index: 1000;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    padding: 20px;
-                ">
-                    <div style="
-                        background: white;
-                        border-radius: 15px;
-                        padding: 30px;
-                        max-width: 600px;
-                        width: 100%;
-                        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-                        position: relative;
-                    ">
-                        <h2 style="margin: 0 0 10px 0; color: #1f2937; font-size: 1.5rem;">${title}</h2>
-                        <p style="margin: 0 0 30px 0; color: #6b7280; font-size: 1rem;">Processing your content...</p>
-                        <div style="display: flex; flex-direction: column; gap: 15px;">
-                            ${steps.map((stepText, index) => `
-                                <div data-step="${index}" style="
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 15px;
-                                    padding: 15px;
-                                    border-radius: 8px;
-                                    background: #f8fafc;
-                                    border: 1px solid #e2e8f0;
-                                    transition: all 0.3s ease;
-                                ">
-                                    <div class="step-indicator" style="
-                                        width: 32px;
-                                        height: 32px;
-                                        border-radius: 50%;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                        font-weight: bold;
-                                        font-size: 14px;
-                                        background: #e5e7eb;
-                                        color: #6b7280;
-                                        flex-shrink: 0;
-                                    ">${index + 1}</div>
-                                    <div class="step-text" style="
-                                        color: #6b7280;
-                                        font-size: 14px;
-                                        line-height: 1.4;
-                                    ">${stepText}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div style="margin-top: 20px; text-align: center; color: #9ca3af; font-size: 14px; font-style: italic;">
-                            This may take a few moments...
-                        </div>
-                    </div>
-                </div>
+            // Create modal container
+            const modal = document.createElement('div');
+            modal.id = 'verboseReviewModal';
+            modal.className = 'modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 1000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
             `;
             
-            // Insert modal HTML
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            // Create modal content
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                border-radius: 15px;
+                padding: 30px;
+                max-width: 600px;
+                width: 100%;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                position: relative;
+            `;
             
-            // Debug: Log the created elements immediately
-            console.log('Modal HTML inserted, checking elements...');
-            console.log('Created modal with steps:', document.querySelectorAll('[data-step]'));
-            console.log('Created indicators:', document.querySelectorAll('.step-indicator'));
-            console.log('Created step texts:', document.querySelectorAll('.step-text'));
+            // Create title
+            const titleElement = document.createElement('h2');
+            titleElement.textContent = title;
+            titleElement.style.cssText = `
+                margin: 0 0 10px 0;
+                color: #1f2937;
+                font-size: 1.5rem;
+            `;
             
-            // Verify elements exist
-            const modal = document.getElementById('verboseReviewModal');
-            if (modal) {
-                console.log('Modal created successfully');
-                console.log('Modal visible:', modal.offsetParent !== null);
-                console.log('Modal display style:', window.getComputedStyle(modal).display);
-            } else {
-                console.error('Modal creation failed!');
-            }
+            // Create subtitle
+            const subtitleElement = document.createElement('p');
+            subtitleElement.textContent = 'Processing your content...';
+            subtitleElement.style.cssText = `
+                margin: 0 0 30px 0;
+                color: #6b7280;
+                font-size: 1rem;
+            `;
+            
+            // Create steps container
+            const stepsContainer = document.createElement('div');
+            stepsContainer.id = 'reviewStepsContainer';
+            stepsContainer.style.cssText = `
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            `;
+            
+            // Create each step
+            steps.forEach((stepText, index) => {
+                const stepElement = document.createElement('div');
+                stepElement.id = `review-step-${index}`;
+                stepElement.setAttribute('data-step', index);
+                stepElement.className = 'review-step';
+                stepElement.style.cssText = `
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    padding: 15px;
+                    border-radius: 8px;
+                    background: #f8fafc;
+                    border: 1px solid #e2e8f0;
+                    transition: all 0.3s ease;
+                `;
+                
+                // Create step indicator
+                const indicator = document.createElement('div');
+                indicator.id = `step-indicator-${index}`;
+                indicator.className = 'step-indicator';
+                indicator.style.cssText = `
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: bold;
+                    font-size: 14px;
+                    background: #e5e7eb;
+                    color: #6b7280;
+                    flex-shrink: 0;
+                `;
+                indicator.textContent = index + 1;
+                
+                // Create step text
+                const textElement = document.createElement('div');
+                textElement.id = `step-text-${index}`;
+                textElement.className = 'step-text';
+                textElement.textContent = stepText;
+                textElement.style.cssText = `
+                    color: #6b7280;
+                    font-size: 14px;
+                    line-height: 1.4;
+                `;
+                
+                stepElement.appendChild(indicator);
+                stepElement.appendChild(textElement);
+                stepsContainer.appendChild(stepElement);
+            });
+            
+            // Create footer message
+            const footerElement = document.createElement('div');
+            footerElement.textContent = 'This may take a few moments...';
+            footerElement.style.cssText = `
+                margin-top: 20px;
+                text-align: center;
+                color: #9ca3af;
+                font-size: 14px;
+                font-style: italic;
+            `;
+            
+            // Assemble modal
+            modalContent.appendChild(titleElement);
+            modalContent.appendChild(subtitleElement);
+            modalContent.appendChild(stepsContainer);
+            modalContent.appendChild(footerElement);
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            console.log('Modal created with', steps.length, 'steps');
         }
         
         // Clear verbose review loading
@@ -6681,94 +6725,69 @@ Be concise but thorough. Focus on the most obvious AI patterns.`;
             }
         }
 
-        // Fixed updateReviewStep function to properly cycle through progress indicators
+        // Update review step with reliable element targeting
         function updateReviewStep(stepIndex, status = 'active') {
             console.log(`Updating step ${stepIndex} to ${status}`);
             
-            // Check if the modal exists
-            const modal = document.getElementById('verboseReviewModal');
-            if (!modal) {
-                console.warn(`Review modal not found when trying to update step ${stepIndex}`);
+            // Use unique IDs for reliable element targeting
+            const stepElement = document.getElementById(`review-step-${stepIndex}`);
+            const indicatorElement = document.getElementById(`step-indicator-${stepIndex}`);
+            const textElement = document.getElementById(`step-text-${stepIndex}`);
+            
+            if (!stepElement) {
+                console.error(`Step element ${stepIndex} not found`);
                 return;
             }
             
-            // Find the step element
-            const step = document.querySelector(`[data-step="${stepIndex}"]`);
-            if (!step) {
-                console.error(`Step ${stepIndex} not found in DOM`);
-                console.log('Available steps:', document.querySelectorAll('[data-step]'));
+            if (!indicatorElement) {
+                console.error(`Indicator element ${stepIndex} not found`);
                 return;
             }
             
-            console.log(`Found step ${stepIndex}, updating...`);
-            updateStepElement(step, stepIndex, status);
-        }
-        
-        function updateStepElement(step, stepIndex, status) {
-            console.log(`Updating step ${stepIndex} to ${status}`, step);
-            console.log('Step innerHTML:', step.innerHTML);
-            console.log('Step children:', step.children);
-            
-            // Remove all status classes from the step
-            step.classList.remove('active', 'completed', 'pending');
-            
-            // Add the new status class
-            step.classList.add(status);
-            
-            // Update the visual indicator
-            const indicator = step.querySelector('.step-indicator');
-            console.log('Found indicator:', indicator);
-            if (indicator) {
-                if (status === 'completed') {
-                    indicator.innerHTML = '✓';
-                    indicator.style.background = '#10b981';
-                    indicator.style.color = 'white';
-                    console.log('Set indicator to completed');
-                } else if (status === 'active') {
-                    indicator.innerHTML = '⏳';
-                    indicator.style.background = '#3b82f6';
-                    indicator.style.color = 'white';
-                    // Add a subtle animation
-                    indicator.style.animation = 'pulse 2s infinite';
-                    console.log('Set indicator to active');
-                } else {
-                    indicator.innerHTML = stepIndex + 1;
-                    indicator.style.background = '#e5e7eb';
-                    indicator.style.color = '#6b7280';
-                    indicator.style.animation = 'none';
-                    console.log('Set indicator to pending');
-                }
-            } else {
-                console.warn('No indicator found for step', stepIndex);
-                console.log('Available classes in step:', step.className);
-                console.log('All elements in step:', step.querySelectorAll('*'));
+            if (!textElement) {
+                console.error(`Text element ${stepIndex} not found`);
+                return;
             }
             
-            // Update the step text color
-            const stepText = step.querySelector('.step-text');
-            console.log('Found step text:', stepText);
-            if (stepText) {
-                if (status === 'completed') {
-                    stepText.style.color = '#10b981';
-                    stepText.style.fontWeight = '500';
-                } else if (status === 'active') {
-                    stepText.style.color = '#3b82f6';
-                    stepText.style.fontWeight = '600';
-                } else {
-                    stepText.style.color = '#6b7280';
-                    stepText.style.fontWeight = '400';
-                }
-                console.log('Updated step text color');
+            console.log(`Found all elements for step ${stepIndex}, updating...`);
+            
+            // Update step background and border
+            stepElement.style.background = status === 'active' ? '#dbeafe' : 
+                                         status === 'completed' ? '#d1fae5' : '#f8fafc';
+            stepElement.style.borderColor = status === 'active' ? '#3b82f6' : 
+                                           status === 'completed' ? '#10b981' : '#e2e8f0';
+            
+            // Update indicator
+            if (status === 'completed') {
+                indicatorElement.innerHTML = '✓';
+                indicatorElement.style.background = '#10b981';
+                indicatorElement.style.color = 'white';
+                indicatorElement.style.animation = 'none';
+            } else if (status === 'active') {
+                indicatorElement.innerHTML = '⏳';
+                indicatorElement.style.background = '#3b82f6';
+                indicatorElement.style.color = 'white';
+                indicatorElement.style.animation = 'pulse 2s infinite';
             } else {
-                console.warn('No step text found for step', stepIndex);
-                console.log('Trying alternative selectors:');
-                console.log('div[class*="step-text"]:', step.querySelector('div[class*="step-text"]'));
-                console.log('div:last-child:', step.querySelector('div:last-child'));
-                console.log('All divs in step:', step.querySelectorAll('div'));
+                indicatorElement.innerHTML = stepIndex + 1;
+                indicatorElement.style.background = '#e5e7eb';
+                indicatorElement.style.color = '#6b7280';
+                indicatorElement.style.animation = 'none';
             }
             
-            // Force a reflow to ensure changes are visible
-            step.offsetHeight;
+            // Update text color
+            if (status === 'completed') {
+                textElement.style.color = '#10b981';
+                textElement.style.fontWeight = '500';
+            } else if (status === 'active') {
+                textElement.style.color = '#3b82f6';
+                textElement.style.fontWeight = '600';
+            } else {
+                textElement.style.color = '#6b7280';
+                textElement.style.fontWeight = '400';
+            }
+            
+            console.log(`Step ${stepIndex} updated to ${status}`);
         }
 
         async function fixAIArtifactsInSection(sectionTitle, sectionContent) {
