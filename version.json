@@ -1,7 +1,8 @@
 {
-  "version": "1.2.5",
+  "version": "1.2.6",
   "buildDate": "2025-01-27T00:00:00Z",
   "changelog": [
+    "v1.2.6 - Completely rewrote progress indicator system with direct HTML insertion",
     "v1.2.5 - Fixed progress indicator timing issues in review functions",
     "v1.2.4 - Enhanced step element debugging with detailed DOM inspection",
     "v1.2.3 - Enhanced progress indicator debugging with retry logic",
