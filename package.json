@@ -1,0 +1,26 @@
+{
+  "name": "editorial-seo-tool",
+  "version": "1.0.0",
+  "description": "AI-powered editorial SEO content generation tool",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "seo",
+    "content-generation",
+    "ai",
+    "editorial",
+    "marketing"
+  ],
+  "author": "Houston Barnett-Gearhart",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chbg/editorial-seo-tool.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
